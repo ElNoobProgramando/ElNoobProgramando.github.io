@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Costo Estándar</title>
+    <link rel="stylesheet" href="estile.css">
+</head>
+<body>
+    <h1>Cálculo de Costo Estándar</h1>
+    <form id="formCostos">
+        <h3>Datos de la pieza (Cédula 1):</h3>
+        <label for="litros_mp">Litros de materia prima:</label>
+        <input type="number" step="0.01" id="litros_mp" name="litros_mp" required><br>
+
+        <label for="horas_mo">Horas de mano de obra:</label>
+        <input type="number" step="0.01" id="horas_mo" name="horas_mo" required><br>
+
+        <label for="horas_maquina">Horas de máquina:</label>
+        <input type="number" step="0.01" id="horas_maquina" name="horas_maquina" required><br>
+
+        <h3>Costos estándar:</h3>
+        <label for="costo_mp">Costo por litro de materia prima:</label>
+        <input type="number" step="0.01" id="costo_mp" name="costo_mp" required><br>
+
+        <label for="costo_mo">Costo por hora de mano de obra:</label>
+        <input type="number" step="0.01" id="costo_mo" name="costo_mo" required><br>
+
+        <label for="costo_maquina">Costo por hora de máquina:</label>
+        <input type="number" step="0.01" id="costo_maquina" name="costo_maquina" required><br>
+
+        <label for="cargos_fijos_por_pieza">Cargos indirectos fijos por pieza:</label>
+        <input type="number" step="0.01" id="cargos_fijos_por_pieza" name="cargos_fijos_por_pieza" required><br>
+
+        <h3>Datos para Cédula 2:</h3>
+        <label for="requerimiento_mpd">Requerimiento total MPD:</label>
+        <input type="number" step="0.01" id="requerimiento_mpd" name="requerimiento_mpd" required><br>
+
+        <label for="requerimiento_mod">Requerimiento total MOD:</label>
+        <input type="number" step="0.01" id="requerimiento_mod" name="requerimiento_mod" required><br>
+
+        <label for="requerimiento_civ">Requerimiento total CIV:</label>
+        <input type="number" step="0.01" id="requerimiento_civ" name="requerimiento_civ" required><br>
+
+        <label for="requerimiento_cif">Requerimiento total CIF:</label>
+        <input type="number" step="0.01" id="requerimiento_cif" name="requerimiento_cif" required><br>
+
+        <h3>Datos para Cédula 3:</h3>
+        <label for="produccion_proceso">Producción en proceso:</label>
+        <input type="number" step="0.01" id="produccion_proceso" name="produccion_proceso" required><br>
+
+        <h3>Datos para Cédula 4 (Desviaciones):</h3>
+        <label for="real_mp">Costo real de Materia Prima:</label>
+        <input type="number" step="0.01" id="real_mp" name="real_mp" required><br>
+
+        <label for="real_mo">Costo real de Mano de Obra:</label>
+        <input type="number" step="0.01" id="real_mo" name="real_mo" required><br>
+
+        <label for="real_ci">Costo real de Cargos Indirectos:</label>
+        <input type="number" step="0.01" id="real_ci" name="real_ci" required><br>
+
+        <h3>Datos para Cédula 5 (Valuacion de la Prod Terminada):</h3>
+        <label for="real_mp">Unidades Terminadas:</label>
+        <input type="number" step="0.01" id="unidades_termi" name="unidades_termi" required><br>
+
+        
+        <h3>Datos para Cédula 6 (Valuacion de Inventario Final):</h3>
+        <label for="real_mp">Unidades vendidas:</label>
+        <input type="number" step="0.01" id="unidades_vendi" name="unidades_vendi" required><br>
+
+        <button type="submit">Calcular</button>
+    </form>
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById('formCostos').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            fetch('main.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultadoDiv = document.getElementById('resultado');
+                resultadoDiv.innerHTML = `
+                    <h3>Resultados:</h3>
+                    <h4>Cédula 1:</h4>
+                    <p>Materia Prima: $${data['Materia Prima']}</p>
+                    <p>Mano de Obra: $${data['Mano de Obra']}</p>
+                    <p>Cargos Indirectos: $${data['Cargos Indirectos']}</p>
+                    <p><strong>Total Costo Estándar: $${data['Total Costo Estándar']}</strong></p>
+                    
+                    <h4>Cédula 2:</h4>
+                    <p>Costo MPD: $${data['Costo MPD']}</p>
+                    <p>Costo MOD: $${data['Costo MOD']}</p>
+                    <p>Costo CIV: $${data['Costo CIV']}</p>
+                    <p>Costo CIF: $${data['Costo CIF']}</p>
+                    <p><strong>Suma Total Cédula 2: $${data['Suma Total Cédula 2']}</strong></p>
+                    
+                    <h4>Cédula 3:</h4>
+                    <p>Costo Proceso MPD: $${data['Costo Proceso MPD']}</p>
+                    <p>Costo Proceso MOD: $${data['Costo Proceso MOD']}</p>
+                    <p>Costo Proceso CIV: $${data['Costo Proceso CIV']}</p>
+                    <p>Costo Proceso CIF: $${data['Costo Proceso CIF']}</p>
+                    <p><strong>Suma Total Cédula 3: $${data['Suma Total Cédula 3']}</strong></p>
+
+                    <h4>Cédula 4 (Desviaciones):</h4>
+                    <p>Desviación MP: $${data['Desviación MP']} (${data['Desviación MP Tipo']})</p>
+                    <p>Desviación MO: $${data['Desviación MO']} (${data['Desviación MO Tipo']})</p>
+                    <p>Desviación CI: $${data['Desviación CI']} (${data['Desviación CI Tipo']})</p>
+
+                    
+                    <h4>Cédula 5 (Val. Prod Terminada):</h4>
+                    <p>Valuacion de la produccion Terminada: $${data['Val.Prod Termi']}</p>
+
+                    
+                    <h4>Cédula 6 (Val. del Inv Final de la Produccion):</h4>
+                    <p>Costo Total de IFPT a CE: $${data['unidades_vendidas']}</p>
+                `;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+
